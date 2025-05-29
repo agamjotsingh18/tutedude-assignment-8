@@ -1,0 +1,29 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 1rem;
+}
+
+header, footer {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+form {
+    margin-bottom: 1rem;
+}
+
+.alert {
+    color: red;
+    font-size: 1.2rem;
+}
+
+.alert.success {
+    color: green;
+}
+
+input, select, button {
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+}

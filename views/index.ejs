@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+
+<main>
+    <% if (message === 'empty') { %>
+        <p class="alert">Please enter a task!</p>
+    <% } else if (message === 'added') { %>
+        <p class="alert success">Task added successfully!</p>
+    <% } else if (message === 'updated') { %>
+        <p class="alert success">Task updated successfully!</p>
+    <% } else if (message === 'deleted') { %>
+        <p class="alert success">Task deleted successfully!</p>
+    <% } %>
+
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="New Task">
+        <select name="priority">
+            <option value="low">Low</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+        </select>
+        <button type="submit">Add</button>
+    </form>
+
+    <ul>
+        <% tasks.forEach(task => { %>
+            <li>
+                <form action="/edit/<%= task._id %>" method="POST">
+                    <input type="text" name="title" value="<%= task.title %>">
+                    <select name="priority">
+                        <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
+                        <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
+                        <option value="urgent" <%= task.priority === 'urgent' ? 'selected' : '' %>>Urgent</option>
+                    </select>
+                    <button type="submit" title="Edit">
+                        🖉 <!-- Pencil icon -->
+                    </button>
+                </form>
+                <form action="/delete/<%= task._id %>" method="POST">
+                    <button type="submit" title="Delete">
+                        🗑 <!-- Trash icon -->
+                    </button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+</main>
+
+<%- include('partials/footer') %>
