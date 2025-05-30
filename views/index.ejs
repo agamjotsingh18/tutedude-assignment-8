@@ -24,7 +24,7 @@
     <ul>
         <% tasks.forEach(task => { %>
             <li>
-                <form action="/edit/<%= task._id %>" method="POST">
+                <form action="/edit/<%= task._id %>?_method=PUT" method="POST">
                     <input type="text" name="title" value="<%= task.title %>">
                     <select name="priority">
                         <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
@@ -35,10 +35,11 @@
                         🖉 <!-- Pencil icon -->
                     </button>
                 </form>
-                <form action="/delete/<%= task._id %>" method="POST">
-                    <button type="submit" title="Delete">
-                        🗑 <!-- Trash icon -->
-                    </button>
+
+                    <form action="/delete/<%= task._id %>?_method=DELETE" method="POST">
+    <button type="submit" title="Delete">🗑</button>
+</form>
+
                 </form>
             </li>
         <% }) %>
