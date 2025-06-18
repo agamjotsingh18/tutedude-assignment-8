@@ -1,18 +1,12 @@
 <%- include('partials/header') %>
 
 <main>
-    <% if (message === 'empty') { %>
-        <p class="alert">Please enter a task!</p>
-    <% } else if (message === 'added') { %>
-        <p class="alert success">Task added successfully!</p>
-    <% } else if (message === 'updated') { %>
-        <p class="alert success">Task updated successfully!</p>
-    <% } else if (message === 'deleted') { %>
-        <p class="alert success">Task deleted successfully!</p>
+    <% if (message) { %>
+        <div class="alert <%= alertClass %>"><%= message %></div>
     <% } %>
 
-    <form action="/add" method="POST">
-        <input type="text" name="title" placeholder="New Task">
+    <form action="/tasks" method="POST">
+        <input type="text" name="title" placeholder="New Task" required>
         <select name="priority">
             <option value="low">Low</option>
             <option value="high">High</option>
@@ -21,25 +15,21 @@
         <button type="submit">Add</button>
     </form>
 
-    <ul>
+    <ul class="task-list">
         <% tasks.forEach(task => { %>
-            <li>
-                <form action="/edit/<%= task._id %>?_method=PUT" method="POST">
-                    <input type="text" name="title" value="<%= task.title %>">
+            <li class="task-item priority-<%= task.priority %>">
+                <form action="/tasks/<%= task._id %>?_method=PUT" method="POST" class="edit-form">
+                    <input type="text" name="title" value="<%= task.title %>" required>
                     <select name="priority">
                         <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
                         <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
                         <option value="urgent" <%= task.priority === 'urgent' ? 'selected' : '' %>>Urgent</option>
                     </select>
-                    <button type="submit" title="Edit">
-                        🖉 <!-- Pencil icon -->
-                    </button>
+                    <button type="submit" class="btn-edit">🖉</button>
                 </form>
 
-                    <form action="/delete/<%= task._id %>?_method=DELETE" method="POST">
-    <button type="submit" title="Delete">🗑</button>
-</form>
-
+                <form action="/tasks/<%= task._id %>?_method=DELETE" method="POST" class="delete-form">
+                    <button type="submit" class="btn-delete">🗑</button>
                 </form>
             </li>
         <% }) %>

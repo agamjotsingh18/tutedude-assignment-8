@@ -5,20 +5,19 @@ const bodyParser = require('body-parser');
 const app = express();
 const methodOverride = require('method-override');
 
+// Configuration
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
-
-// Add this line after bodyParser
 app.use(methodOverride('_method'));
 
-
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI, { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.log(err));
 
 // Task Schema
 const taskSchema = new mongoose.Schema({
@@ -29,44 +28,61 @@ const Task = mongoose.model('Task', taskSchema);
 
 // Routes
 app.get('/', async (req, res) => {
-    const tasks = await Task.find();
-    res.render('index', { tasks, message: req.query.message });
-});
-
-
-
-app.post('/add', async (req, res) => {
-    const { title, priority } = req.body;
-    if (!title.trim()) {
-        return res.redirect('/?message=empty');
+    try {
+        const tasks = await Task.find().sort({ createdAt: -1 });
+        res.render('index', { 
+            tasks, 
+            message: req.query.message,
+            alertClass: req.query.alertClass || ''
+        });
+    } catch (err) {
+        console.error(err);
+        res.redirect('/?message=error&alertClass=error');
     }
-    const newTask = new Task({ title, priority });
-    await newTask.save();
-    res.redirect('/?message=added');
 });
 
-app.post('/edit/:id', async (req, res) => {
+app.post('/tasks', async (req, res) => {
     const { title, priority } = req.body;
-    await Task.findByIdAndUpdate(req.params.id, { title, priority });
-    res.redirect('/?message=updated');
+    
+    if (!title.trim()) {
+        return res.redirect('/?message=Please enter a task!&alertClass=error');
+    }
+
+    try {
+        const newTask = new Task({ title, priority });
+        await newTask.save();
+        res.redirect('/?message=Task added successfully!&alertClass=success');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/?message=Error adding task&alertClass=error');
+    }
 });
 
-app.post('/delete/:id', async (req, res) => {
-    await Task.findByIdAndDelete(req.params.id);
-    res.redirect('/?message=deleted');
-});
-
-app.put('/edit/:id', async (req, res) => {
+app.put('/tasks/:id', async (req, res) => {
     const { title, priority } = req.body;
-    await Task.findByIdAndUpdate(req.params.id, { title, priority });
-    res.redirect('/?message=updated');
+    
+    if (!title.trim()) {
+        return res.redirect('/?message=Please enter a task!&alertClass=error');
+    }
+
+    try {
+        await Task.findByIdAndUpdate(req.params.id, { title, priority });
+        res.redirect('/?message=Task updated successfully!&alertClass=success');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/?message=Error updating task&alertClass=error');
+    }
 });
 
-app.delete('/delete/:id', async (req, res) => {
-    await Task.findByIdAndDelete(req.params.id);
-    res.redirect('/?message=deleted');
+app.delete('/tasks/:id', async (req, res) => {
+    try {
+        await Task.findByIdAndDelete(req.params.id);
+        res.redirect('/?message=Task deleted successfully!&alertClass=success');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/?message=Error deleting task&alertClass=error');
+    }
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
