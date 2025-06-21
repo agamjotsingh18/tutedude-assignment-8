@@ -15,25 +15,30 @@
         <button type="submit">Add</button>
     </form>
 
-    <ul class="task-list">
-        <% tasks.forEach(task => { %>
-            <li class="task-item priority-<%= task.priority %>">
-                <form action="/tasks/<%= task._id %>?_method=PUT" method="POST" class="edit-form">
-                    <input type="text" name="title" value="<%= task.title %>" required>
-                    <select name="priority">
-                        <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
-                        <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
-                        <option value="urgent" <%= task.priority === 'urgent' ? 'selected' : '' %>>Urgent</option>
-                    </select>
-                    <button type="submit" class="btn-edit">🖉</button>
-                </form>
-
-                <form action="/tasks/<%= task._id %>?_method=DELETE" method="POST" class="delete-form">
-                    <button type="submit" class="btn-delete">🗑</button>
-                </form>
-            </li>
-        <% }) %>
-    </ul>
+    <% if (tasks.length === 0) { %>
+        <div class="alert info">
+            Your todo list is empty! Add your first task above.
+        </div>
+    <% } else { %>
+        <ul class="task-list">
+            <% tasks.forEach(task => { %>
+                <li class="task-item priority-<%= task.priority.toLowerCase() %>">
+                    <form action="/tasks/<%= task._id %>?_method=PUT" method="POST" class="edit-form">
+                        <input type="text" name="title" value="<%= task.title %>" required>
+                        <select name="priority">
+                            <option value="low" <%= task.priority === 'low' ? 'selected' : '' %>>Low</option>
+                            <option value="high" <%= task.priority === 'high' ? 'selected' : '' %>>High</option>
+                            <option value="urgent" <%= task.priority === 'urgent' ? 'selected' : '' %>>Urgent</option>
+                        </select>
+                        <button type="submit" class="btn-edit">🖉</button>
+                    </form>
+                    <form action="/tasks/<%= task._id %>?_method=DELETE" method="POST" class="delete-form">
+                        <button type="submit" class="btn-delete">🗑</button>
+                    </form>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
 </main>
 
 <%- include('partials/footer') %>

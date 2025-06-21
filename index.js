@@ -40,6 +40,21 @@ app.get('/', async (req, res) => {
     }
 });
 
+
+app.get('/', async (req, res) => {
+    try {
+        const tasks = await Task.find().sort({ createdAt: -1 }) || [];
+        res.render('index', { 
+            tasks, 
+            message: req.query.message,
+            alertClass: req.query.alertClass || ''
+        });
+    } catch (err) {
+        console.error(err);
+        res.redirect('/?message=Error loading tasks&alertClass=error');
+    }
+});
+
 app.post('/tasks', async (req, res) => {
     const { title, priority } = req.body;
     

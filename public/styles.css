@@ -76,6 +76,16 @@ main {
   color: #006644;
 }
 
+
+.alert.info {
+    background-color: #e7f5ff;
+    color: #1864ab;
+    border-left: 4px solid #4dabf7;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+}
+
 /* Input Form - Modern Style */
 .task-form {
   display: flex;
